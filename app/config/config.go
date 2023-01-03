@@ -2,10 +2,12 @@ package config
 
 type Config struct {
 	Database struct {
-		Host         string
-		DatabaseName string
-		UserName     string
-		Password     string
+		Production struct {
+			Host         string
+			DatabaseName string
+			UserName     string
+			Password     string
+		}
 	}
 	Server struct {
 		Port string
@@ -16,10 +18,10 @@ func NewConfig() *Config {
 
 	c := new(Config)
 
-	c.Database.Host = ""
-	c.Database.DatabaseName = ""
-	c.Database.UserName = ""
-	c.Database.Password = ""
+	c.Database.Production.Host = ""
+	c.Database.Production.DatabaseName = ""
+	c.Database.Production.UserName = ""
+	c.Database.Production.Password = ""
 
 	c.Server.Port = ""
 
