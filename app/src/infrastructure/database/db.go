@@ -3,9 +3,8 @@ package db
 import (
 	"fmt"
 
-	"github.com/takeuchi-shogo/clean-architecture-golang/config"
-
 	"github.com/jinzhu/gorm"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/config"
 )
 
 type DB struct {
@@ -15,12 +14,13 @@ type DB struct {
 func NewDB(c *config.Config) *DB {
 
 	db := &DB{}
-	db.Connection = db.connect(
-		c.Database.Production.Host,
-		c.Database.Production.UserName,
-		c.Database.Production.Password,
-		c.Database.Production.DatabaseName,
-	)
+	// デバック中の為。コメントアウトしておく
+	// db.Connection = db.connect(
+	// 	c.Database.Production.Host,
+	// 	c.Database.Production.UserName,
+	// 	c.Database.Production.Password,
+	// 	c.Database.Production.DatabaseName,
+	// )
 
 	return db
 }

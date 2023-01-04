@@ -1,3 +1,4 @@
 package entities
 
-type Users struct{}
+type Users struct {
+}

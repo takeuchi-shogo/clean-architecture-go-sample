@@ -1,12 +1,26 @@
 package main
 
 import (
-	"github.com/takeuchi-shogo/clean-architecture-golang/config"
-	"github.com/takeuchi-shogo/sns-api/app/src/infrastructure"
+	"fmt"
+
+	"github.com/takeuchi-shogo/clean-architecture-golang/lib"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/config"
+	db "github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/database"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/route"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/server"
 )
 
 func main() {
 
-	config := config.NewConfig()
-	db := infrastructure.NewDB(config)
+	env := lib.NewEnv()
+	fmt.Println(env)
+
+	config := config.NewConfig(env)
+	db := db.NewDB(config)
+
+	route := route.NewRouting(config, db)
+
+	server := server.NewServer(config, db, route)
+
+	server.Run(server.Port)
 }
