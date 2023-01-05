@@ -12,10 +12,11 @@ type Cors struct {
 
 func NewCors(cfg *config.Config) *Cors {
 	c := &Cors{}
+	// DefaultConfig returns a generic default configuration mapped to localhost.
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = cfg.Cors.AllowOringins
 
-	c.Config = cors.New(cors.Config{
-		AllowOrigins: cfg.Cors.AllowOringins,
-	})
+	c.Config = cors.New(corsConfig)
 
 	return c
 }

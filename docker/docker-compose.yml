@@ -1,0 +1,43 @@
+
+# 下記コマンドにより上位ディレクトリの.envのファイルを読み込む
+# docker-compose --env-file ./.env -f docker/docker-compose.yml xxxx
+version: '3'
+
+name: clean-architecture-golang
+
+services:
+  app:
+    container_name: clean-go-api
+    build:
+      context: ../
+      dockerfile: docker/app/Dockerfile
+    ports:
+      - 8180:${SERVER_PORT}
+    depends_on:
+      - database
+    volumes:
+      - ../app:/var/www/html
+      # - ../nginx/config/default.conf:/etc/nginx/conf.d/default.conf
+      - ../.bashrc:/root/.bashrc
+
+  database:
+    container_name: clean-go-db
+    build: 
+      context: ../
+      dockerfile: docker/mysql/Dockerfile
+    ports:
+      - 3306:${DB_PORT}
+    expose:
+      - ${DB_PORT}
+    restart: always
+    # コンテナ外からの接続権限を与える
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASS}'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: '${DB_NAME}'
+      MYSQL_USER: '${DB_USER}'
+      MYSQL_PASSWORD: '${DB_PASS}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - ../mysql/data:/var/lib/mysql
+      - ../mysql/migrations:/sql
