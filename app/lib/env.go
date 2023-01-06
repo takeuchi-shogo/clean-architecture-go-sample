@@ -26,7 +26,7 @@ func NewEnv() Env {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("error read config")
+		log.Fatal("error read config", err)
 	}
 
 	err = viper.Unmarshal(&env)

@@ -6,4 +6,5 @@ import (
 
 type UserRepository interface {
 	FindByID(userID int) (user entities.Users, err error)
+	Create(user entities.Users) (createdUser entities.Users, err error)
 }

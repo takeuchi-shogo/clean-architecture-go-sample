@@ -1,6 +1,6 @@
 mysql/data/*
 
-tmp/*
+app/tmp/*
 
 .env
 

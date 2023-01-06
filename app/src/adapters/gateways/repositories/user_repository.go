@@ -16,3 +16,10 @@ func (r *UserRepository) FindByID(userID int) (user entities.Users, err error) {
 	user.DisplayName = "test taro"
 	return user, nil
 }
+
+func (r *UserRepository) Create(user entities.Users) (createdUser entities.Users, err error) {
+	createdUser = entities.Users{}
+	createdUser.DisplayName = user.DisplayName
+
+	return createdUser, nil
+}
