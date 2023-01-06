@@ -7,6 +7,7 @@ import (
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/controllers"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/repositories"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/usecases/interactor/product"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/entities"
 )
 
 type UsersController struct {
@@ -27,7 +28,7 @@ func (c *UsersController) Get(ctx controllers.Context) {
 	user, res := c.Interactor.Get(id)
 	fmt.Println(res)
 	if res.Error != nil {
-		ctx.JSON(res.Code, controllers.NewH(res.Error.ErrorType, nil))
+		ctx.JSON(res.Code, entities.NewErrorResponse(400, []string{"users.get"}))
 		return
 	}
 

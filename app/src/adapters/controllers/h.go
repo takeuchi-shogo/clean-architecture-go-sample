@@ -1,8 +1,8 @@
 package controllers
 
 type H struct {
-	Message string
-	Object  interface{}
+	Message string      `json:"message"`
+	Object  interface{} `json:"object"`
 }
 
 func NewH(message string, obj interface{}) *H {
