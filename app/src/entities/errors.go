@@ -13,6 +13,56 @@ type ErrorDetails struct {
 	ErrorMessages string `json:"messages"`
 }
 
+type ErrorMessage struct {
+	UserErr struct {
+		NotFound string
+	}
+}
+
+func NewErrorMessage() *ErrorMessage {
+
+	em := &ErrorMessage{}
+
+	em.UserErr.NotFound = "user account is not found"
+
+	return em
+}
+
+func NewErrorResponse(code int) *ErrorResponse {
+
+	er := &ErrorResponse{}
+
+	er = er.setError(code)
+
+	return er
+}
+
+func (er *ErrorResponse) setError(code int) *ErrorResponse {
+
+	switch code {
+	case 200:
+		return nil
+	case 400:
+
+	case 401:
+	case 403:
+	case 404:
+	case 405:
+	case 408:
+	case 409:
+	case 422:
+	case 429:
+
+	case 500:
+	case 502:
+	case 503:
+	default:
+		return nil
+	}
+
+	return nil
+}
+
 /*
 error response example:When I get a user that doesn't exist.
 {

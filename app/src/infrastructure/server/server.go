@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/takeuchi-shogo/clean-architecture-golang/lib"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/config"
 	db "github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/database"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/middleware"
@@ -10,15 +10,15 @@ import (
 
 type Server struct {
 	DB      *db.DB
-	Gin     *gin.Engine
+	Handler lib.RequestHandler
 	Port    string
 	Routing *route.Routing
 }
 
-func NewServer(c *config.Config, db *db.DB, routing *route.Routing) *Server {
+func NewServer(c *config.Config, handler lib.RequestHandler, db *db.DB, routing *route.Routing) *Server {
 	s := &Server{
 		DB:      db,
-		Gin:     middleware.NewRequestHandler().Gin,
+		Handler: handler,
 		Port:    c.Server.Port,
 		Routing: routing,
 	}
@@ -29,9 +29,9 @@ func NewServer(c *config.Config, db *db.DB, routing *route.Routing) *Server {
 }
 
 func (s *Server) setCors(cors *middleware.Cors) {
-	s.Gin.Use(cors.Config)
+	s.Handler.Gin.Use(cors.Config)
 }
 
 func (s *Server) Run(port string) {
-	s.Gin.Run(port)
+	s.Handler.Gin.Run(port)
 }

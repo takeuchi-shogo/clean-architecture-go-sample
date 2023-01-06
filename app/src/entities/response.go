@@ -6,22 +6,15 @@ type Response struct {
 }
 
 func NewResponse(code int, t, resource string) *Response {
-	r := &Response{
-		Code: code,
-		Error: &ErrorResponse{
-			RequestID: "",
-			ErrorType: t,
-			Errors: []ErrorDetails{
-				{
-					Resource:      resource,
-					ErrorTitle:    "",
-					ErrorMessages: "",
-				},
-			},
-		},
-	}
+	r := &Response{}
 
-	r.setErrorDetails()
+	r.Code = code
+
+	if t != "" && resource != "" {
+		r.Error = &ErrorResponse{}
+
+		r.setErrorDetails()
+	}
 
 	return r
 }
