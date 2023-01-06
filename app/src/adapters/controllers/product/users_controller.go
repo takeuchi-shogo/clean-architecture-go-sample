@@ -28,7 +28,7 @@ func (c *UsersController) Get(ctx controllers.Context) {
 	user, res := c.Interactor.Get(id)
 	fmt.Println(res)
 	if res.Error != nil {
-		ctx.JSON(res.Code, entities.NewErrorResponse(400, []string{"users.get"}))
+		ctx.JSON(res.Code, entities.NewErrorResponse(res.Code, res.Resources, res.Error))
 		return
 	}
 

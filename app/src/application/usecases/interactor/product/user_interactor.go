@@ -16,7 +16,7 @@ type UserInteractor struct {
 
 func (i *UserInteractor) Get(id int) (user entities.Users, resultStatus *usecases.ResultStatus) {
 	user, err := i.User.FindByID(id)
-	if err == nil {
+	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(400, []string{"users.get"}, errors.New("e"))
 	}
 	return user, usecases.NewResultStatus(200, []string{}, nil)

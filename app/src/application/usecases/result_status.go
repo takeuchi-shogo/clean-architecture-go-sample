@@ -1,6 +1,6 @@
 package usecases
 
-// Controllerへ情報をまとめて返すためのオブジェクト
+// Controllerへ返すためのオブジェクト
 type ResultStatus struct {
 	Code      int
 	Resources []string

@@ -2,7 +2,7 @@ package controllers
 
 type H struct {
 	Message string      `json:"message"`
-	Object  interface{} `json:"object"`
+	Object  interface{} `json:"data"`
 }
 
 func NewH(message string, obj interface{}) *H {

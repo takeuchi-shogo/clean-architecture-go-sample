@@ -1,19 +1,20 @@
 package entities
 
 type ErrorResponse struct {
-	RequestID  string         `json:"requestId"`
-	StatusCode int            `json:"code"`
-	ErrorType  string         `json:"type"` // Maybe unnecessary?
-	Errors     []ErrorDetails `json:"errors"`
+	RequestID string         `json:"requestId"` // request id
+	Code      int            `json:"code"`      // status code
+	ErrorType string         `json:"type"`      // maybe unnecessary?
+	Message   string         `json:"message"`   // error message
+	Errors    []ErrorDetails `json:"errors"`
 }
 
 type ErrorDetails struct {
 	Doamin   string `json:"domain"`   // Set the default to global.
 	Resource string `json:"resource"` // where did it happen.
-	Title    string `json:"title"`    // error reason.
+	Reason   string `json:"reason"`   // error reason.
 	Message  string `json:"message"`  // error message.
 	// ↓ Error content displayed on the frontend
-	ErrorUserTitle   string `json:"errorUserTitle"`
+	// ErrorUserTitle   string `json:"errorUserTitle"`
 	ErrorUserMessage string `json:"errorUserMessage"`
 }
 
@@ -85,7 +86,7 @@ func (er *ErrorResource) setErrorResource() {
 	er.Account.Delete = "account.delete"
 }
 
-type ErrorTitle struct {
+type ErrorReason struct {
 	// 400
 	BadRequest struct {
 		BadRequest       string
@@ -154,8 +155,8 @@ type ErrorTitle struct {
 	}
 }
 
-func NewErrorTitle(lang string) *ErrorTitle {
-	et := &ErrorTitle{}
+func NewErrorReason(lang string) *ErrorReason {
+	et := &ErrorReason{}
 
 	et.setBadRequest(lang)
 	et.setInternalServerError()
@@ -165,18 +166,18 @@ func NewErrorTitle(lang string) *ErrorTitle {
 }
 
 // 400 error
-func (et *ErrorTitle) setBadRequest(lang string) {
+func (et *ErrorReason) setBadRequest(lang string) {
 	switch lang {
 	case "en":
-		et.BadRequest.BadRequest = "bad request"
+		et.BadRequest.BadRequest = "badRequest"
 		et.BadRequest.Invalid = "invalid"
-		et.BadRequest.InvalidParameter = "invald parameter"
-		et.BadRequest.InvalidQuery = "invald query"
-		et.BadRequest.NotDownload = "not download"
-		et.BadRequest.NotUpload = "not upload"
-		et.BadRequest.PaeseError = "parse error"
+		et.BadRequest.InvalidParameter = "invaldParameter"
+		et.BadRequest.InvalidQuery = "invaldQuery"
+		et.BadRequest.NotDownload = "notDownload"
+		et.BadRequest.NotUpload = "notUpload"
+		et.BadRequest.PaeseError = "parseError"
 		et.BadRequest.Required = "required"
-		et.BadRequest.UnknownApi = "unknown api"
+		et.BadRequest.UnknownApi = "unknownApi"
 	case "ja":
 		et.BadRequest.BadRequest = "リクエストを正常に処理できませんでした"
 		et.BadRequest.Invalid = "このリクエストは無効です"
@@ -191,66 +192,75 @@ func (et *ErrorTitle) setBadRequest(lang string) {
 }
 
 // 500 error
-func (et *ErrorTitle) setInternalServerError() {
-	et.InternalServerError.internalError = "internal server error"
+func (et *ErrorReason) setInternalServerError() {
+	et.InternalServerError.internalError = "internalServerError"
 }
 
 //503 error
-func (et *ErrorTitle) setServiceUnavailable() {
+func (et *ErrorReason) setServiceUnavailable() {
 	et.ServiceUnavailable.BackendError = ""
 	et.ServiceUnavailable.BackendConnected = ""
 	et.ServiceUnavailable.NotReady = ""
-	et.ServiceUnavailable.Maintenance = "Maintenance mode"
+	et.ServiceUnavailable.Maintenance = "maintenanceMode"
 }
 
-func NewErrorResponse(code int, resources []string) *ErrorResponse {
+func NewErrorResponse(code int, resources []string, err error) *ErrorResponse {
 
 	er := &ErrorResponse{}
 
-	etp := NewErrorType()
-
-	er = er.setError(code, resources, etp)
+	er = er.setError(code, resources, err)
 
 	return er
 }
 
-func (er *ErrorResponse) setError(code int, resources []string, etp *ErrorType) *ErrorResponse {
+func (er *ErrorResponse) setError(code int, resources []string, err error) *ErrorResponse {
+
+	etp := NewErrorType()
 
 	switch code {
 	case 200:
 		return nil
 	case 400:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.BadRequest
+		er.Message = err.Error()
 		er.Errors = setErrors(resources)
 	case 401:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.Unauthorized
+		er.Message = err.Error()
 	case 403:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.Forbidden
+		er.Message = err.Error()
 	case 404:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.NotFound
+		er.Message = err.Error()
 	case 405:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.MethodNotAllowed
+		er.Message = err.Error()
 	case 406:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.Conflict
+		er.Message = err.Error()
 	case 429:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.TooManyRequests
-
+		er.Message = err.Error()
 	case 500:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.InternalServerError
+		er.Message = err.Error()
 	case 502:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.BadGateways
+		er.Message = err.Error()
 	case 503:
-		er.StatusCode = code
+		er.Code = code
 		er.ErrorType = etp.ServiceUnavailable
+		er.Message = err.Error()
 	default:
 		return nil
 	}
@@ -261,19 +271,19 @@ func (er *ErrorResponse) setError(code int, resources []string, etp *ErrorType) 
 func setErrors(resources []string) []ErrorDetails {
 	eds := []ErrorDetails{}
 
-	et := NewErrorTitle("ja")
+	et := NewErrorReason("ja")
 	er := NewErrorResource()
-	for _, r := range resources {
+	for _, resource := range resources {
 		ed := ErrorDetails{}
 
 		ed.Doamin = "global"
 
-		switch r {
+		switch resource {
 		case er.User.Get:
-			ed.Resource = r
-			ed.Title = et.BadRequest.BadRequest
+			ed.Resource = resource
+			ed.Reason = et.BadRequest.BadRequest
 			ed.Message = "テスト"
-			ed.ErrorUserTitle = et.BadRequest.BadRequest
+			// ed.ErrorUserTitle = et.BadRequest.BadRequest
 			ed.ErrorUserMessage = getOneUserError
 		}
 
@@ -283,25 +293,6 @@ func setErrors(resources []string) []ErrorDetails {
 	return eds
 }
 
-/*
-error response example:When I get a user that doesn't exist.
-{
-	"error": {
-		"requestId": "",
-		"code": 400,
-		"type": "bad request",
-		"errors": [
-			"domain": "global",
-			"resource": "users.get",
-			"title": "user not found",
-			"message: "user does not exist",
-			"errorUserTitle": "ユーザーを取得できませんでした",
-			"errorUserMessage": "存在しないユーザーです",
-		]
-	}
-}
-*/
-
 var (
 	// user error list
 	getOneUserError = "ユーザーの取得に失敗しました"
@@ -310,4 +301,29 @@ var (
 	createAccountError = "アカウントの作成に失敗しました"
 	updateAccountError = "アカウントの更新に失敗しました"
 	deleteAccountError = "アカウントの削除に失敗しました"
+	// Validate error list
+	validateError            = "正しく入力されていない項目があります"
+	validateDisplayNameError = "不適切なアカウント名です"
 )
+
+/*
+error response example:When I get a user that doesn't exist.
+{
+	"error": {
+		"requestId": "",
+		"code": 400,
+		"type": "bad request",
+		"errors": [
+			{
+				"domain": "global",
+				"resource": "users.get",
+				"reason": "bad Request",
+				"title": "user not found",
+				"message: "user does not exist",
+				"errorUserTitle": "ユーザーを取得できませんでした",
+				"errorUserMessage": "存在しないユーザーです",
+			},
+		],
+	}
+}
+*/
