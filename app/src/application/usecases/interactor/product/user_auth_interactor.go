@@ -18,7 +18,6 @@ type UserAuthInteractor struct {
 
 // Check screenName and password after check jwt
 func (i *UserAuthInteractor) Autholization(user entities.Users, jwtToken string) (foundUser entities.Users, resultStatus *usecases.ResultStatus) {
-	// return i.Jwt.
 	foundUser, err := i.User.FindByScreenName(user.ScreenName)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(404, []string{}, err)
@@ -32,9 +31,11 @@ func (i *UserAuthInteractor) Autholization(user entities.Users, jwtToken string)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, err)
 	}
-	// claims, _ := token.Claims.(jwt.MapClaims)
+	if foundUser.ID != claims["userId"] {
+		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, errors.New("failed user"))
+	}
 	// check token
-	if isTokenExpire(int64(claims["expireAt"].(float64))) {
+	if isTokenExpire(int64(claims["exp"].(float64))) {
 		return entities.Users{}, usecases.NewResultStatus(401, []string{"auth.expireAt"}, errors.New("token is expire"))
 	}
 

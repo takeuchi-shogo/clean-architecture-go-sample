@@ -13,7 +13,6 @@ import (
 )
 
 type JwtAuth struct {
-	// Claims    jwt.Claims
 	TokenExpireAt int
 	SecretKey     string
 }
@@ -24,7 +23,6 @@ type UnsignedResponse struct {
 
 func NewJwtAuth(c *config.Config) *JwtAuth {
 	return &JwtAuth{
-		// Claims:    claim,
 		TokenExpireAt: c.Jwt.TokenExpireAt,
 		SecretKey:     c.Jwt.SecretKey,
 	}
