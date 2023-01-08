@@ -23,12 +23,12 @@ func NewServer(c *config.Config, handler lib.RequestHandler, db *db.DB, routing 
 		Routing: routing,
 	}
 
-	s.setCors(middleware.NewCors(c))
+	s.setUp(middleware.NewCors(c))
 
 	return s
 }
 
-func (s *Server) setCors(cors *middleware.Cors) {
+func (s *Server) setUp(cors *middleware.Cors) {
 	s.Handler.Gin.Use(cors.Config)
 }
 

@@ -5,13 +5,13 @@ import (
 
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/repositories"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/usecases"
-	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/usecases/presenter"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/usecases/output"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/entities"
 )
 
 type UserInteractor struct {
 	User          repositories.UserRepository
-	UserPresenter presenter.UserPresenterOutput
+	UserPresenter output.UserInteractorOutput
 }
 
 func (i *UserInteractor) Get(id int) (user entities.Users, resultStatus *usecases.ResultStatus) {

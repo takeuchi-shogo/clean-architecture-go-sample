@@ -22,7 +22,7 @@ func NewInfrastructure(lib lib.Library) {
 
 	db := db.NewDB(config)
 
-	route := route.NewRouting(db, lib.Handler)
+	route := route.NewRouting(config, db, lib.Handler)
 
 	server := server.NewServer(config, lib.Handler, db, route)
 

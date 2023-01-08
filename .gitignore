@@ -2,6 +2,8 @@ mysql/data/*
 
 app/tmp/*
 
+/env/*.env
+
 .env
 
 app/src/infrastructure/config/config.go

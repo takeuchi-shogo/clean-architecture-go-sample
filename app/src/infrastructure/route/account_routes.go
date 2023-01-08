@@ -5,12 +5,15 @@ import (
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/controllers/product"
 )
 
-func addAccountRoute(rg *gin.RouterGroup) {
+func setAccountRoutes(rg *gin.RouterGroup) {
 	accountsController := product.NewAccountsController()
 
 	accounts := rg.Group("/accounts")
 
-	accounts.POST("/:id", func(c *gin.Context) {
+	accounts.GET("/", func(c *gin.Context) {
+		accountsController.Get(c)
+	})
+	accounts.POST("/", func(c *gin.Context) {
 		accountsController.Post(c)
 	})
 	// accounts.PATCH("/", func(c *gin.Context) {

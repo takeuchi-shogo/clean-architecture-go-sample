@@ -32,3 +32,7 @@ func (db *DB) connect(host string, username string, password string, db_name str
 	}
 	return connection
 }
+
+func (db *DB) Conn() *gorm.DB {
+	return db.Connection
+}
