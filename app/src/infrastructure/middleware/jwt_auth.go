@@ -33,8 +33,8 @@ func NewJwtAuth(c *config.Config) *JwtAuth {
 // Create json web token
 func (j *JwtAuth) CreateToken(userID int) string {
 	claim := jwt.MapClaims{
-		"userId":   userID,
-		"expireAt": time.Now().Add(time.Hour * time.Duration(j.TokenExpireAt)).Unix(), // 1day
+		"userId": userID,
+		"exp":    time.Now().Add(time.Hour * time.Duration(j.TokenExpireAt)).Unix(), // 1day
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claim)
 
@@ -44,19 +44,20 @@ func (j *JwtAuth) CreateToken(userID int) string {
 	return tokenString
 }
 
-func (j *JwtAuth) ParseToken(jwtToken string) (*jwt.Token, error) {
+// Parse json web token
+func (j *JwtAuth) ParseToken(jwtToken string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte("SecretKey"), nil
+		return []byte(j.SecretKey), nil
 	})
 
-	if err != nil {
-		return nil, errors.New("bad jwt token")
+	if claims, ok := token.Claims.(jwt.MapClaims); !ok && token.Valid {
+		return claims, nil
+	} else {
+		return claims, err
 	}
-
-	return token, nil
 }
 
 func extractBearerToken(header string) (string, error) {
@@ -64,12 +65,12 @@ func extractBearerToken(header string) (string, error) {
 		return "", errors.New("bad header value given")
 	}
 
-	jwtToken := strings.Split(header, " ")
-	if len(jwtToken) != 2 {
+	jwtToken := strings.Split(header, ".")
+	if len(jwtToken) != 3 {
 		return "", errors.New("incorrectly formatted authorization header")
 	}
 
-	return jwtToken[1], nil
+	return header, nil
 }
 
 // Check json web token in request header
@@ -81,26 +82,12 @@ func (j *JwtAuth) CheckJwtToken(c *gin.Context) {
 		})
 		return
 	}
-	t, err := j.ParseToken(token)
+	_, err = j.ParseToken(token)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, UnsignedResponse{
 			Message: err.Error(),
 		})
 		return
 	}
-
-	if claims, ok := t.Claims.(jwt.MapClaims); ok && t.Valid {
-		fmt.Printf("user_id: %v\n", int64(claims["user_id"].(float64)))
-		fmt.Printf("exp: %v\n", int64(claims["exp"].(float64)))
-		c.AbortWithStatusJSON(http.StatusBadRequest, UnsignedResponse{
-			Message: err.Error(),
-		})
-		return
-	} else {
-		fmt.Println(err)
-		c.AbortWithStatusJSON(http.StatusBadRequest, UnsignedResponse{
-			Message: err.Error(),
-		})
-		return
-	}
+	return
 }

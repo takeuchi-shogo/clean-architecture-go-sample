@@ -2,6 +2,7 @@ package product
 
 import (
 	"errors"
+	"time"
 
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/gateways"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/repositories"
@@ -24,12 +25,26 @@ func (i *UserAuthInteractor) Autholization(user entities.Users, jwtToken string)
 	}
 
 	if utilities.CheckPasswordHash(user.Password, foundUser.Password) {
-		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.autholization"}, errors.New("failed autholization"))
+		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, errors.New("failed autholization"))
 	}
 
-	if i.Jwt.CheckJwtToken(jwtToken) {
-		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.autholization"}, errors.New("test auth error"))
+	claims, err := i.Jwt.ParseToken(jwtToken)
+	if err != nil {
+		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, err)
+	}
+	// claims, _ := token.Claims.(jwt.MapClaims)
+	// check token
+	if isTokenExpire(int64(claims["expireAt"].(float64))) {
+		return entities.Users{}, usecases.NewResultStatus(401, []string{"auth.expireAt"}, errors.New("token is expire"))
 	}
 
 	return foundUser, usecases.NewResultStatus(200, []string{}, nil)
+}
+
+func isTokenExpire(expireAt int64) bool {
+	currentTime := time.Now().Unix()
+	if expireAt < currentTime {
+		return true
+	}
+	return false
 }

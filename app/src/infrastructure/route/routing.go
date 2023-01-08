@@ -4,6 +4,7 @@ import (
 	"github.com/takeuchi-shogo/clean-architecture-golang/lib"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/config"
 	db "github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/database"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/middleware"
 )
 
 type Routing struct {
@@ -17,16 +18,18 @@ func NewRouting(c *config.Config, db *db.DB, handler lib.RequestHandler) *Routin
 		Handler: handler,
 	}
 
-	r.setRouting(c)
+	jwt := middleware.NewJwtAuth(c)
+
+	r.setRouting(c, jwt)
 
 	return r
 }
 
-func (r *Routing) setRouting(c *config.Config) {
+func (r *Routing) setRouting(c *config.Config, jwt *middleware.JwtAuth) {
 
 	v1 := r.Handler.Gin.Group("/v1.0")
 	{
 		setAccountRoutes(v1)
-		setUserRoutes(v1, c)
+		setUserRoutes(v1, c, jwt)
 	}
 }
