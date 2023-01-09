@@ -28,7 +28,7 @@ func NewAccountsController() *AccountsController {
 }
 
 func (c *AccountsController) Get(ctx controllers.Context) {
-	userID, err := strconv.Atoi("1")
+	userID, err := strconv.Atoi("100")
 
 	if err != nil {
 		code := 400

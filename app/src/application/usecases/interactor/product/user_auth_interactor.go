@@ -31,7 +31,7 @@ func (i *UserAuthInteractor) Autholization(user entities.Users, jwtToken string)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, err)
 	}
-	if foundUser.ID != claims["userId"] {
+	if foundUser.ID != claims["aud"] {
 		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, errors.New("failed user"))
 	}
 	// check token

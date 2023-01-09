@@ -31,8 +31,9 @@ func NewJwtAuth(c *config.Config) *JwtAuth {
 // Create json web token
 func (j *JwtAuth) CreateToken(userID int) string {
 	claim := jwt.MapClaims{
-		"userId": userID,
-		"exp":    time.Now().Add(time.Hour * time.Duration(j.TokenExpireAt)).Unix(), // 1day
+		"iss": "test",
+		"aud": userID,
+		"exp": time.Now().Add(time.Hour * time.Duration(j.TokenExpireAt)).Unix(), // 1day
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claim)
 
