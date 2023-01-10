@@ -1,3 +1,4 @@
+# Build stage
 FROM golang:1
 RUN go install github.com/cosmtrek/air@latest
 

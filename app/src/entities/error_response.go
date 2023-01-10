@@ -284,7 +284,7 @@ func setErrors(resources []string) []ErrorDetails {
 			ed.Reason = et.BadRequest.BadRequest
 			ed.Message = "テスト"
 			// ed.ErrorUserTitle = et.BadRequest.BadRequest
-			ed.ErrorUserMessage = getOneUserError
+			ed.ErrorUserMessage = getOneUserErr.Error()
 		}
 
 		eds = append(eds, ed)

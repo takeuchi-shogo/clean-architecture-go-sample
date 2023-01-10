@@ -1,16 +1,22 @@
 package entities
 
+import "errors"
+
 var (
 	// user error list
-	getOneUserError = "ユーザーの取得に失敗しました"
+	getOneUserErr = errors.New("ユーザーの取得に失敗しました")
 	// Account error list
-	getAccountError    = "アカウントの取得に失敗しました"
-	createAccountError = "アカウントの作成に失敗しました"
-	updateAccountError = "アカウントの更新に失敗しました"
-	deleteAccountError = "アカウントの削除に失敗しました"
+	getAccountErr    = errors.New("アカウントの取得に失敗しました")
+	createAccountErr = errors.New("アカウントの作成に失敗しました")
+	updateAccountErr = errors.New("アカウントの更新に失敗しました")
+	deleteAccountErr = errors.New("アカウントの削除に失敗しました")
 	// Validate error list
-	validateError            = "正しく入力されていない項目があります"
-	validateDisplayNameError = "不適切なアカウント名です"
+	validateErr            = errors.New("正しく入力されていない項目があります")
+	validateEmptyErr       = errors.New("入力されていません")
+	validateDisplayNameErr = errors.New("不適切なアカウント名です")
+	validateScreenNameErr  = errors.New("")
+	validateEmailErr       = errors.New("正しいメールアドレスの形式ではありません")
+	validatePasswordErr    = errors.New("正しく入力されていません")
 )
 
 /*

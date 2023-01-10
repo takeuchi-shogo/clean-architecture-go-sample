@@ -31,11 +31,17 @@ func (r *UserRepository) FindByScreenName(db *gorm.DB, screenName string) (user 
 
 func (r *UserRepository) Create(db *gorm.DB, user entities.Users) (createdUser entities.Users, err error) {
 	createdUser = entities.Users{}
-	createdUser.DisplayName = user.DisplayName
-	createdUser.ScreenName = user.ScreenName
-	createdUser.Email = user.Email
-	createdUser.Password = user.Password
+	// createdUser.DisplayName = user.DisplayName
+	// createdUser.ScreenName = user.ScreenName
+	// createdUser.Email = user.Email
+	// createdUser.Password = user.Password
+	// createdUser = user
+
+	// err = user.Validate()
+
 	createdUser = user
 
-	return createdUser, nil
+	result := db.Create(&createdUser)
+
+	return createdUser, result.Error
 }
