@@ -1,1 +1,1 @@
-CREATE DATABASE clean_architecture_golang
+CREATE DATABASE IF NOT EXISTS clean_architecture_golang

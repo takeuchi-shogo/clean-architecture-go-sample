@@ -10,11 +10,13 @@ import (
 )
 
 type AccountInteractor struct {
+	DB   repositories.DBRepository
 	User repositories.UserRepository
 }
 
 func (i *AccountInteractor) Get(userID int) (account entities.Users, resultStatus *usecases.ResultStatus) {
-	foundUser, err := i.User.FindByID(userID)
+	db := i.DB.Conn()
+	foundUser, err := i.User.FindByID(db, userID)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(400, []string{"account.get"}, errors.New("test get account error"))
 	}
@@ -22,6 +24,8 @@ func (i *AccountInteractor) Get(userID int) (account entities.Users, resultStatu
 }
 
 func (i *AccountInteractor) Create(user entities.Users) (createdUser entities.Users, resultStatus *usecases.ResultStatus) {
+	db := i.DB.Conn()
+
 	newPassword, err := utilities.HashPassword(user.Password)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(400, []string{"accounts.create"}, err)
@@ -31,7 +35,7 @@ func (i *AccountInteractor) Create(user entities.Users) (createdUser entities.Us
 	user.CreatedAt = utilities.SetCurrentUnixTime()
 	user.UpdatedAt = utilities.SetCurrentUnixTime()
 
-	createdUser, err = i.User.Create(user)
+	createdUser, err = i.User.Create(db, user)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(400, []string{"accounts.create"}, errors.New("test create error"))
 	}

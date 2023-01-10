@@ -41,7 +41,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
       # - ../mysql/data:/var/lib/mysql
-      - ../mysql/migrations:/sql
+      - ../mysql/sql:/sql
     # cap_add:
     #   - SYS_NICE #追加
     networks:

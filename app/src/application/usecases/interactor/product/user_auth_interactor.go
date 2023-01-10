@@ -12,13 +12,21 @@ import (
 )
 
 type UserAuthInteractor struct {
+	DB   repositories.DBRepository
 	Jwt  gateways.JwtMiddleware
 	User repositories.UserRepository
 }
 
+type AuthToken struct {
+	JwtToken string
+	User     entities.Users
+}
+
 // Check screenName and password after check jwt
 func (i *UserAuthInteractor) Autholization(user entities.Users, jwtToken string) (foundUser entities.Users, resultStatus *usecases.ResultStatus) {
-	foundUser, err := i.User.FindByScreenName(user.ScreenName)
+	db := i.DB.Conn()
+
+	foundUser, err := i.User.FindByScreenName(db, user.ScreenName)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(404, []string{}, err)
 	}
@@ -40,6 +48,23 @@ func (i *UserAuthInteractor) Autholization(user entities.Users, jwtToken string)
 	}
 
 	return foundUser, usecases.NewResultStatus(200, []string{}, nil)
+}
+
+func (i *UserAuthInteractor) Create(user entities.Users) (auth AuthToken, resultStatus *usecases.ResultStatus) {
+	db := i.DB.Conn()
+
+	foundUser, err := i.User.FindByScreenName(db, user.ScreenName)
+	if err != nil {
+		return AuthToken{}, usecases.NewResultStatus(400, []string{}, errors.New("user is not found"))
+	}
+
+	if utilities.CheckPasswordHash(user.Password, foundUser.Password) {
+		return AuthToken{}, usecases.NewResultStatus(400, []string{}, errors.New("test auth error"))
+	}
+
+	token := i.Jwt.CreateToken(foundUser.ID)
+
+	return AuthToken{JwtToken: token, User: foundUser}, usecases.NewResultStatus(200, []string{}, nil)
 }
 
 func isTokenExpire(expireAt int64) bool {

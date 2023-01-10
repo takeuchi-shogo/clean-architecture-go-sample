@@ -19,9 +19,10 @@ type AccountsControllerProvider struct {
 	Jwt middlewares.JwtMiddleware
 }
 
-func NewAccountsController() *AccountsController {
+func NewAccountsController(p AccountsControllerProvider) *AccountsController {
 	return &AccountsController{
 		Interactor: product.AccountInteractor{
+			DB:   &repositories.DBRepository{DB: p.DB},
 			User: &repositories.UserRepository{},
 		},
 	}

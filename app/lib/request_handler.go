@@ -8,6 +8,8 @@ type RequestHandler struct {
 
 func NewRequestHandler() RequestHandler {
 	engine := gin.New()
+	engine.Use(gin.Logger())
+	engine.Use(gin.Recovery())
 	return RequestHandler{
 		Gin: engine,
 	}

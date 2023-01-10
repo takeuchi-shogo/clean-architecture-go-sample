@@ -6,17 +6,18 @@ import (
 )
 
 func setAccountRoutes(rg *gin.RouterGroup) {
-	accountsController := product.NewAccountsController()
+	accountsController := product.NewAccountsController(product.AccountsControllerProvider{})
 
 	accounts := rg.Group("/accounts")
-
-	accounts.GET("/", func(c *gin.Context) {
-		accountsController.Get(c)
-	})
-	accounts.POST("/", func(c *gin.Context) {
-		accountsController.Post(c)
-	})
-	// accounts.PATCH("/", func(c *gin.Context) {
-	// 	accountsController.Patch(c)
-	// })
+	{
+		accounts.GET("/", func(c *gin.Context) {
+			accountsController.Get(c)
+		})
+		accounts.POST("/", func(c *gin.Context) {
+			accountsController.Post(c)
+		})
+		// accounts.PATCH("/", func(c *gin.Context) {
+		// 	accountsController.Patch(c)
+		// })
+	}
 }

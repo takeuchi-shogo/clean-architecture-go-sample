@@ -83,7 +83,7 @@ func (j *JwtAuth) CheckJwtToken(c *gin.Context) {
 	}
 	_, err = j.ParseToken(token)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, UnsignedResponse{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, UnsignedResponse{
 			Message: err.Error(),
 		})
 		return

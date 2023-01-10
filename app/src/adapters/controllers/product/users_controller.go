@@ -16,16 +16,19 @@ type UsersController struct {
 }
 
 type UsersControllerProvider struct {
+	DB  repositories.DB
 	Jwt middlewares.Jwt
 }
 
 func NewUsersController(p UsersControllerProvider) *UsersController {
 	return &UsersController{
 		Autholization: product.UserAuthInteractor{
+			DB:   &repositories.DBRepository{DB: p.DB},
 			Jwt:  &middlewares.JwtMiddleware{Jwt: p.Jwt},
 			User: &repositories.UserRepository{},
 		},
 		Interactor: product.UserInteractor{
+			DB:   &repositories.DBRepository{DB: p.DB},
 			User: &repositories.UserRepository{},
 		},
 	}

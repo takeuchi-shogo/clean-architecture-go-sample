@@ -16,12 +16,12 @@ func NewDB(c *config.Config) *DB {
 
 	db := &DB{}
 	// デバック中の為。コメントアウトしておく
-	db.Connection = db.connect(
-		c.Database.Production.Host,
-		c.Database.Production.UserName,
-		c.Database.Production.Password,
-		c.Database.Production.DatabaseName,
-	)
+	// db.Connection = db.connect(
+	// 	c.Database.Production.Host,
+	// 	c.Database.Production.UserName,
+	// 	c.Database.Production.Password,
+	// 	c.Database.Production.DatabaseName,
+	// )
 
 	return db
 }
