@@ -1,4 +1,4 @@
-package infrastructure
+package cmd
 
 import (
 	"github.com/takeuchi-shogo/clean-architecture-golang/lib"
@@ -16,13 +16,13 @@ import (
 // }
 
 // main.go の記述をシンプルにするために
-func NewInfrastructure(lib lib.Library) {
+func RunServer(lib lib.Library) {
 
 	config := config.NewConfig(lib.Env)
 
 	db := db.NewDB(config)
 
-	route := route.NewRouting(db, lib.Handler)
+	route := route.NewRouting(config, db, lib.Handler)
 
 	server := server.NewServer(config, lib.Handler, db, route)
 

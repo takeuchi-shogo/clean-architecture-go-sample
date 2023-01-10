@@ -7,14 +7,13 @@ import (
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/middleware"
 )
 
-func setUserRoutes(rg *gin.RouterGroup, c *config.Config, jwt *middleware.JwtAuth) {
+func setUserAuthRoutes(rg *gin.RouterGroup, c *config.Config, jwt *middleware.JwtAuth) {
 
-	usersController := product.NewUsersController(product.UsersControllerProvider{Jwt: jwt})
-
-	users := rg.Group("/users").Use(jwt.CheckJwtToken)
+	userAuthController := product.NewUserAuthController()
+	auth := rg.Group("/authorization")
 	{
-		users.GET("/:id", func(c *gin.Context) {
-			usersController.Get(c)
+		auth.POST("/", func(c *gin.Context) {
+			userAuthController.Post(c)
 		})
 	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/config"
+	_ "gorm.io/driver/mysql"
 )
 
 type DB struct {
@@ -31,4 +32,8 @@ func (db *DB) connect(host string, username string, password string, db_name str
 		panic(err.Error())
 	}
 	return connection
+}
+
+func (db *DB) Conn() *gorm.DB {
+	return db.Connection
 }
