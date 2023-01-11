@@ -1,4 +1,4 @@
-package api_errors
+package apierrors
 
 func NewError(code, msg string) *ApiError {
 	return &ApiError{

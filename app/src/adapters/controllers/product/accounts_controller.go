@@ -1,7 +1,7 @@
 package product
 
 import (
-	"github.com/takeuchi-shogo/clean-architecture-golang/pkg/api_errors"
+	"github.com/takeuchi-shogo/clean-architecture-golang/pkg/apierrors"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/controllers"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/middlewares"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/repositories"
@@ -67,7 +67,7 @@ func (c *AccountsController) Post(ctx controllers.Context) {
 	})
 
 	if res.Error != nil {
-		ctx.JSON(res.Code, api_errors.BadRequest.InvalidParameter)
+		ctx.JSON(res.Code, apierrors.BadRequest.New(res.Error.Error()))
 		// ctx.JSON(res.Code, entities.NewErrorResponse(res.Code, res.Resources, res.Error))
 		return
 	}

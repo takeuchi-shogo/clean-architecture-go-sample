@@ -1,4 +1,4 @@
-package api_errors
+package apierrors
 
 /* Error message for user */
 var (
