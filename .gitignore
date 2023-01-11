@@ -7,5 +7,6 @@ app/tmp/*
 .env
 
 app/src/infrastructure/config/config.go
+app/pkg
 
 !.gitkeep

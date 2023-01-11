@@ -1,6 +1,9 @@
 package repositories
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/entities"
 	"gorm.io/gorm"
 )
@@ -20,9 +23,9 @@ func (r *UserRepository) FindByID(db *gorm.DB, userID int) (user entities.Users,
 
 func (r *UserRepository) FindByScreenName(db *gorm.DB, screenName string) (user entities.Users, err error) {
 	user = entities.Users{}
-	db.Where("sreen_name = ?", screenName).First(&user)
+	db.Where("screen_name = ?", screenName).First(&user)
 	if user.ID <= 0 {
-		return entities.Users{}, err
+		return entities.Users{}, errors.New("user is not found")
 	}
 	// user.ID = 100
 	// user.DisplayName = "test taro"
@@ -40,8 +43,9 @@ func (r *UserRepository) Create(db *gorm.DB, user entities.Users) (createdUser e
 	// err = user.Validate()
 
 	createdUser = user
+	fmt.Println(createdUser)
 
-	result := db.Create(&createdUser)
+	// result := db.Create(&createdUser)
 
-	return createdUser, result.Error
+	return createdUser, nil
 }

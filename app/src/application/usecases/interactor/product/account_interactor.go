@@ -35,6 +35,10 @@ func (i *AccountInteractor) Create(user entities.Users) (createdUser entities.Us
 	user.CreatedAt = utilities.SetCurrentUnixTime()
 	user.UpdatedAt = utilities.SetCurrentUnixTime()
 
+	if err = user.Validate(); err != nil {
+		return entities.Users{}, usecases.NewResultStatus(400, []string{"accounts.create"}, err)
+	}
+
 	createdUser, err = i.User.Create(db, user)
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(400, []string{"accounts.create"}, errors.New("test create error"))
