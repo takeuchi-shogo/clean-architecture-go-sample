@@ -23,28 +23,27 @@ type AuthToken struct {
 }
 
 // Check screenName and password after check jwt
-func (i *UserAuthInteractor) Autholization(user entities.Users, jwtToken string) (foundUser entities.Users, resultStatus *usecases.ResultStatus) {
-	db := i.DB.Conn()
-
-	foundUser, err := i.User.FindByScreenName(db, user.ScreenName)
-	if err != nil {
-		return entities.Users{}, usecases.NewResultStatus(404, []string{}, err)
-	}
-
-	if utilities.CheckPasswordHash(user.Password, foundUser.Password) {
-		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, errors.New("failed autholization"))
-	}
+func (i *UserAuthInteractor) Autholization(jwtToken string) (foundUser entities.Users, resultStatus *usecases.ResultStatus) {
 
 	claims, err := i.Jwt.ParseToken(jwtToken)
+
 	if err != nil {
 		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, err)
 	}
+
 	if foundUser.ID != claims["aud"] {
 		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, errors.New("failed user"))
 	}
 	// check token
 	if isTokenExpire(int64(claims["exp"].(float64))) {
 		return entities.Users{}, usecases.NewResultStatus(401, []string{"auth.expireAt"}, errors.New("token is expire"))
+	}
+
+	db := i.DB.Conn()
+
+	foundUser, err = i.User.FindByID(db, claims["aud"].(int))
+	if err != nil {
+		return entities.Users{}, usecases.NewResultStatus(404, []string{}, err)
 	}
 
 	return foundUser, usecases.NewResultStatus(200, []string{}, nil)

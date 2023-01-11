@@ -1,8 +1,6 @@
 package product
 
 import (
-	"fmt"
-
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/controllers"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/repositories"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/application/usecases/interactor/product"
@@ -39,7 +37,6 @@ func (c *userAuthController) Post(ctx controllers.Context) {
 		ScreenName: screenName,
 		Password:   password,
 	})
-	fmt.Println("www")
 
 	if res.Error != nil {
 		ctx.JSON(res.Code, entities.NewErrorResponse(res.Code, res.Resources, res.Error))

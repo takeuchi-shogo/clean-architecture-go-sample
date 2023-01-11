@@ -1,8 +1,7 @@
 package product
 
 import (
-	"strconv"
-
+	"github.com/takeuchi-shogo/clean-architecture-golang/pkg/api_errors"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/controllers"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/middlewares"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/repositories"
@@ -11,16 +10,22 @@ import (
 )
 
 type AccountsController struct {
+	Auth       product.UserAuthInteractor
 	Interactor product.AccountInteractor
 }
 
 type AccountsControllerProvider struct {
 	DB  repositories.DB
-	Jwt middlewares.JwtMiddleware
+	Jwt middlewares.Jwt
 }
 
 func NewAccountsController(p AccountsControllerProvider) *AccountsController {
 	return &AccountsController{
+		Auth: product.UserAuthInteractor{
+			DB:   &repositories.DBRepository{DB: p.DB},
+			Jwt:  &middlewares.JwtMiddleware{Jwt: p.Jwt},
+			User: &repositories.UserRepository{},
+		},
 		Interactor: product.AccountInteractor{
 			DB:   &repositories.DBRepository{DB: p.DB},
 			User: &repositories.UserRepository{},
@@ -29,15 +34,15 @@ func NewAccountsController(p AccountsControllerProvider) *AccountsController {
 }
 
 func (c *AccountsController) Get(ctx controllers.Context) {
-	userID, err := strconv.Atoi("100")
+	token, err := c.Auth.Autholization(ctx.GetHeader("Authorization"))
 
 	if err != nil {
 		code := 400
-		ctx.JSON(code, entities.NewErrorResponse(code, []string{}, err))
+		ctx.JSON(code, entities.NewErrorResponse(code, []string{}, nil))
 		return
 	}
 
-	account, res := c.Interactor.Get(userID)
+	account, res := c.Interactor.Get(token.ID)
 
 	if res.Error != nil {
 		ctx.JSON(res.Code, entities.NewErrorResponse(res.Code, res.Resources, res.Error))
@@ -62,7 +67,8 @@ func (c *AccountsController) Post(ctx controllers.Context) {
 	})
 
 	if res.Error != nil {
-		ctx.JSON(res.Code, entities.NewErrorResponse(res.Code, res.Resources, res.Error))
+		ctx.JSON(res.Code, api_errors.BadRequest.InvalidParameter)
+		// ctx.JSON(res.Code, entities.NewErrorResponse(res.Code, res.Resources, res.Error))
 		return
 	}
 
