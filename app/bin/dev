@@ -4,6 +4,6 @@ export PATH=$PATH:/usr/local/go/bin
 export GOPATH=/go
 export PATH=$PATH:$GOPATH/bin
 
-/etc/init.d/nginx start
-# go mod tidy
-air -c .air.toml
+# /etc/init.d/nginx start
+go mod tidy
+air

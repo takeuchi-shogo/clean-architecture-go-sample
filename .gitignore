@@ -1,7 +1,12 @@
 mysql/data/*
 
-tmp/*
+app/tmp/*
+
+/env/*.env
 
 .env
 
 app/src/infrastructure/config/config.go
+# app/pkg
+
+!.gitkeep

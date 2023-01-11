@@ -7,8 +7,9 @@ type Library struct {
 }
 
 func NewLibrary() Library {
+	env := NewEnv()
 	return Library{
-		Env:     NewEnv(),
+		Env:     env,
 		Logger:  GetLogger(),
 		Handler: NewRequestHandler(),
 	}
