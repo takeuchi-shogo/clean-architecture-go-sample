@@ -1,101 +1,42 @@
 package entities
 
-type ErrorResponse struct {
-	RequestID  string         `json:"requestId"`
-	StatusCode int            `json:"code"`
-	ErrorType  string         `json:"type"`
-	Errors     []ErrorDetails `json:"errors"`
-}
+import "errors"
 
-type ErrorDetails struct {
-	Resource      string `json:"resource"`
-	ErrorTitle    string `json:"title"`
-	ErrorMessages string `json:"messages"`
-}
-
-type ErrorMessage struct {
-	UserErr struct {
-		NotFound string
-	}
-}
-
-func NewErrorMessage() *ErrorMessage {
-
-	em := &ErrorMessage{}
-
-	em.UserErr.NotFound = "user account is not found"
-
-	return em
-}
-
-func NewErrorResponse(code int) *ErrorResponse {
-
-	er := &ErrorResponse{}
-
-	er = er.setError(code)
-
-	return er
-}
-
-func (er *ErrorResponse) setError(code int) *ErrorResponse {
-
-	switch code {
-	case 200:
-		return nil
-	case 400:
-
-	case 401:
-	case 403:
-	case 404:
-	case 405:
-	case 408:
-	case 409:
-	case 422:
-	case 429:
-
-	case 500:
-	case 502:
-	case 503:
-	default:
-		return nil
-	}
-
-	return nil
-}
+var (
+	// user error list
+	getOneUserErr = errors.New("ユーザーの取得に失敗しました")
+	// Account error list
+	getAccountErr    = errors.New("アカウントの取得に失敗しました")
+	createAccountErr = errors.New("アカウントの作成に失敗しました")
+	updateAccountErr = errors.New("アカウントの更新に失敗しました")
+	deleteAccountErr = errors.New("アカウントの削除に失敗しました")
+	// Validate error list
+	validateErr            = errors.New("正しく入力されていない項目があります")
+	validateEmptyErr       = errors.New("入力されていません")
+	validateDisplayNameErr = errors.New("不適切なアカウント名です")
+	validateScreenNameErr  = errors.New("")
+	validateEmailErr       = errors.New("正しいメールアドレスの形式ではありません")
+	validatePasswordErr    = errors.New("正しく入力されていません")
+)
 
 /*
 error response example:When I get a user that doesn't exist.
 {
-	"errorResponse": {
+	"error": {
 		"requestId": "",
-		"cose": 400,
-		"type": "not found",
+		"code": 400,
+		"type": "bad request",
 		"errors": [
-			"resource": "users.get",
-			"title": "user not found",
-			"message: "user not exists",
-		]
+			{
+				"domain": "global",
+				"resource": "users.get",
+				"reason": "bad Request",
+				"title": "user not found",
+				"message: "user does not exist",
+				"errorUserTitle": "ユーザーを取得できませんでした",
+				"errorUserMessage": "存在しないユーザーです",
+			},
+		],
 	}
 }
-status code list
-###############################
-200 OK
-201 Created
-202 Accepted
-
-400 Bad Request
-401 Unauthorized
-403 Forbidden
-404 Not Found
-405 Method Not Allowed
-408 Request Timeout
-409 Conflict
-422 Unprocessable Entity
-429 Too Many Requests
-
-500 Internal Server Error
-502 Bad Gateways
-503 Service Unavailable
-###############################
 */
-var ()
