@@ -2,10 +2,11 @@ package main
 
 import (
 	"github.com/takeuchi-shogo/clean-architecture-golang/lib"
-	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure"
+	"github.com/takeuchi-shogo/clean-architecture-golang/src/infrastructure/cmd"
 )
 
 func main() {
 	library := lib.NewLibrary()
-	infrastructure.NewInfrastructure(library)
+
+	cmd.RunServer(library)
 }

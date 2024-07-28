@@ -1,1 +1,0 @@
-CREATE DATABASE clean_architecture_golang
