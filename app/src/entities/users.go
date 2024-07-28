@@ -10,6 +10,8 @@ type Users struct {
 	Password    string `json:"password"`
 	CreatedAt   int64  `json:"createdAt"`
 	UpdatedAt   int64  `json:"updatedAt"`
+
+	Posts []Posts `json:"post" gorm:"forgenkey:UserID"`
 }
 
 func (e *Users) Validate() error {

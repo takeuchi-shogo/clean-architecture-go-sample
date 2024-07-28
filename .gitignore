@@ -10,3 +10,4 @@ app/src/infrastructure/config/config.go
 # app/pkg
 
 !.gitkeep
+.vscode
