@@ -11,7 +11,8 @@ import (
 func setUserAuthRoutes(rg *gin.RouterGroup, db *db.DB, c *config.Config, jwt *middleware.JwtAuth) {
 
 	userAuthController := product.NewUserAuthController(product.UserAuthControllerProvider{
-		DB: db,
+		DB:  db,
+		Jwt: jwt,
 	})
 	auth := rg.Group("/authorization")
 	{

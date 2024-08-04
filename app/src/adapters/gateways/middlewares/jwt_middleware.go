@@ -3,7 +3,7 @@ package middlewares
 import "github.com/dgrijalva/jwt-go"
 
 type Jwt interface {
-	CreateToken(userID int) string
+	CreateToken(userID string) string
 	ParseToken(jwtToken string) (jwt.MapClaims, error)
 	// CheckJwtToken(jwtToken string) bool
 }
@@ -12,7 +12,7 @@ type JwtMiddleware struct {
 	Jwt Jwt
 }
 
-func (m *JwtMiddleware) CreateToken(userID int) string {
+func (m *JwtMiddleware) CreateToken(userID string) string {
 	return m.Jwt.CreateToken(userID)
 }
 

@@ -19,31 +19,29 @@ type UserAuthInteractor struct {
 
 type AuthToken struct {
 	JwtToken string
-	User     entities.Users
+	User     *entities.Users
 }
 
 // Check screenName and password after check jwt
-func (i *UserAuthInteractor) Autholization(jwtToken string) (foundUser entities.Users, resultStatus *usecases.ResultStatus) {
+func (i *UserAuthInteractor) Autholization(jwtToken string) (foundUser *entities.Users, resultStatus *usecases.ResultStatus) {
 
 	claims, err := i.Jwt.ParseToken(jwtToken)
 
 	if err != nil {
-		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, err)
+		return &entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, err)
 	}
-
-	if foundUser.ID != claims["aud"] {
-		return entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, errors.New("failed user"))
-	}
-	// check token
 	if isTokenExpire(int64(claims["exp"].(float64))) {
-		return entities.Users{}, usecases.NewResultStatus(401, []string{"auth.expireAt"}, errors.New("token is expire"))
+		return &entities.Users{}, usecases.NewResultStatus(401, []string{"auth.expireAt"}, errors.New("token is expire"))
 	}
 
 	db := i.DB.Conn()
 
-	foundUser, err = i.User.FindByID(db, claims["aud"].(int))
+	foundUser, err = i.User.FindByID(db, claims["aud"].(string))
 	if err != nil {
-		return entities.Users{}, usecases.NewResultStatus(404, []string{}, err)
+		return &entities.Users{}, usecases.NewResultStatus(404, []string{}, err)
+	}
+	if foundUser.ID != claims["aud"] {
+		return &entities.Users{}, usecases.NewResultStatus(401, []string{"account.authorization"}, errors.New("failed user"))
 	}
 
 	return foundUser, usecases.NewResultStatus(200, []string{}, nil)
@@ -68,8 +66,5 @@ func (i *UserAuthInteractor) Create(user entities.Users) (auth AuthToken, result
 
 func isTokenExpire(expireAt int64) bool {
 	currentTime := time.Now().Unix()
-	if expireAt < currentTime {
-		return true
-	}
-	return false
+	return expireAt < currentTime
 }

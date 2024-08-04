@@ -1,8 +1,6 @@
 package product
 
 import (
-	"strconv"
-
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/controllers"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/middlewares"
 	"github.com/takeuchi-shogo/clean-architecture-golang/src/adapters/gateways/repositories"
@@ -35,7 +33,7 @@ func NewUsersController(p UsersControllerProvider) *UsersController {
 }
 
 func (c *UsersController) Get(ctx controllers.Context) {
-	id, _ := strconv.Atoi(ctx.Param("id"))
+	id := ctx.Param("id")
 
 	user, res := c.Interactor.Get(id)
 	if res.Error != nil {

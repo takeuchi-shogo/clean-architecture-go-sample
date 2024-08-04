@@ -3,15 +3,27 @@ package entities
 import "errors"
 
 type Users struct {
-	ID          int    `json:"id"`
+	ID          string `json:"id"`
 	DisplayName string `json:"displayName"`
 	ScreenName  string `json:"screenName"`
 	Email       string `json:"email"`
 	Password    string `json:"password"`
 	CreatedAt   int64  `json:"createdAt"`
 	UpdatedAt   int64  `json:"updatedAt"`
+	DeletedAt   *int64 `json:"deletedAt"`
 
-	Posts []Posts `json:"post" gorm:"forgenkey:UserID"`
+	Posts []*Posts `json:"posts" gorm:"foreignKey:UserID;references:ID"`
+}
+
+type UsersResponse struct {
+	ID          string `json:"id"`
+	DisplayName string `json:"displayName"`
+	ScreenName  string `json:"screenName"`
+	Email       string `json:"email"`
+	CreatedAt   int64  `json:"createdAt"`
+	UpdatedAt   int64  `json:"updatedAt"`
+
+	Posts []*Posts `json:"posts"`
 }
 
 func (e *Users) Validate() error {
@@ -48,7 +60,18 @@ func (e *Users) validatePassword() error {
 	return nil
 }
 
-func setErrorList(errList []error, message string) []error {
-	errList = append(errList, errors.New(message))
-	return errList
+// func setErrorList(errList []error, message string) []error {
+// 	errList = append(errList, errors.New(message))
+// 	return errList
+// }
+
+func (e *Users) BuildResponse() *UsersResponse {
+	return &UsersResponse{
+		ID:          e.ID,
+		DisplayName: e.DisplayName,
+		ScreenName:  e.ScreenName,
+		Email:       e.Email,
+		CreatedAt:   e.CreatedAt,
+		UpdatedAt:   e.UpdatedAt,
+	}
 }

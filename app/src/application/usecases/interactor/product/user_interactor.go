@@ -15,12 +15,12 @@ type UserInteractor struct {
 	UserPresenter output.UserInteractorOutput
 }
 
-func (i *UserInteractor) Get(id int) (user entities.Users, resultStatus *usecases.ResultStatus) {
+func (i *UserInteractor) Get(id string) (user *entities.Users, resultStatus *usecases.ResultStatus) {
 	db := i.DB.Conn()
 
 	user, err := i.User.FindByID(db, id)
 	if err != nil {
-		return entities.Users{}, usecases.NewResultStatus(400, []string{"users.get"}, errors.New("e"))
+		return &entities.Users{}, usecases.NewResultStatus(400, []string{"users.get"}, errors.New("e"))
 	}
 	return user, usecases.NewResultStatus(200, []string{}, nil)
 }

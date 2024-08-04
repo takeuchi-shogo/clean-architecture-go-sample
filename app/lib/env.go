@@ -8,15 +8,19 @@ import (
 
 // As a bridge into /src/infrastructure/config
 type Env struct {
-	ServerPort  string `mapstructure:"SERVER_PORT"`
-	Environment string `mapstructure:"ENV"`
-	LogOutput   string `mapstructure:"LOG_OUTPUT"`
-	LogLevel    string `mapstructure:"LOG_LEVEL"`
-	DBUsername  string `mapstructure:"DB_USER"`
-	DBPassword  string `mapstructure:"DB_PASS"`
-	DBHost      string `mapstructure:"DB_HOST"`
-	DBPort      string `mapstructure:"DB_PORT"`
-	DBName      string `mapstructure:"DB_NAME"`
+	ServerPort      string `mapstructure:"SERVER_PORT"`
+	Environment     string `mapstructure:"ENV"`
+	LogOutput       string `mapstructure:"LOG_OUTPUT"`
+	LogLevel        string `mapstructure:"LOG_LEVEL"`
+	DBUsername      string `mapstructure:"DB_USER"`
+	DBPassword      string `mapstructure:"DB_PASS"`
+	DBHost          string `mapstructure:"DB_HOST"`
+	DBPort          string `mapstructure:"DB_PORT"`
+	DBName          string `mapstructure:"DB_NAME"`
+	DBSlaveUserName string `mapstructure:"DB_SLAVE_USER"`
+	DBSlavePassword string `mapstructure:"DB_SLAVE_PASS"`
+	DBSlaveHost     string `mapstructure:"DB_SLAVE_HOST"`
+	DBSlaveName     string `mapstructure:"DB_SLAVE_NAME"`
 }
 
 func NewEnv() Env {

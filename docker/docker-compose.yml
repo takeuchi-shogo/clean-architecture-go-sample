@@ -74,6 +74,19 @@ services:
     networks:
       - clean-architecture-golang-network
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: database_master
+      PMA_USER: root
+      PMA_PASSWORD: password
+    ports:
+      - 18081:80
+    depends_on:
+      - database_master
+    networks:
+      - clean-architecture-golang-network
+
 networks:
   clean-architecture-golang-network:
     name: clean_architecture_golang_network
