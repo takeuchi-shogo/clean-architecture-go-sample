@@ -13,7 +13,8 @@ services:
     ports:
       - 8080:${SERVER_PORT}
     depends_on:
-      - database
+      - database_master
+      - database_slave
     volumes:
       - ../app:/var/www/html
       # - ../nginx/config/default.conf:/etc/nginx/conf.d/default.conf
@@ -21,11 +22,11 @@ services:
     networks:
       - clean-architecture-golang-network
 
-  database:
-    container_name: clean_go_db
+  database_master:
+    container_name: clean_go_db_master
     build:
       context: ../
-      dockerfile: docker/mysql/Dockerfile
+      dockerfile: docker/mysql/master/Dockerfile
     ports:
       - 3306:${DB_PORT}
     expose:
@@ -40,10 +41,49 @@ services:
       # MYSQL_PASSWORD: '${DB_PASS}'
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
-      # - ../mysql/data:/var/lib/mysql
-      - ../mysql/sql:/sql
+      - ../mysql/master/data:/var/lib/mysql
+      - ../mysql/master/sql:/sql
     # cap_add:
     #   - SYS_NICE #追加
+    networks:
+      - clean-architecture-golang-network
+
+  database_slave:
+    container_name: clean_go_db_slave
+    build:
+      context: ../
+      dockerfile: docker/mysql/slave/Dockerfile
+    ports:
+      - 13306:${DB_PORT}
+    expose:
+      - ${DB_PORT}
+    restart: always
+    # コンテナ外からの接続権限を与える
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASS}'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: '${DB_NAME}'
+      # MYSQL_USER: '${DB_USER}'
+      # MYSQL_PASSWORD: '${DB_PASS}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - ../mysql/slave/data:/var/lib/mysql
+      - ../mysql/slave/sql:/sql
+    # cap_add:
+    #   - SYS_NICE #追加
+    networks:
+      - clean-architecture-golang-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: database_master
+      PMA_USER: root
+      PMA_PASSWORD: password
+    ports:
+      - 18081:80
+    depends_on:
+      - database_master
     networks:
       - clean-architecture-golang-network
 

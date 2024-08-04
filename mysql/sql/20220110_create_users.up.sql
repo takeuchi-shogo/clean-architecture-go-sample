@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 	`password` varchar(255) NOT NULL, 
 	`created_at` int UNSIGNED NOT NULL,
 	`updated_at` int UNSIGNED NOT NULL,
+	`deleted_at` int UNSIGNED NULL,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-DROP TABLE IF EXISTS `users`;

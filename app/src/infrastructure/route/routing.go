@@ -30,6 +30,7 @@ func (r *Routing) setRouting(c *config.Config, jwt *middleware.JwtAuth) {
 	v1 := r.Handler.Gin.Group("/v1.0")
 	{
 		setAccountRoutes(v1, r.DB, c, jwt)
+		setPostRoutes(v1, r.DB)
 		setUserAuthRoutes(v1, r.DB, c, jwt)
 		setUserRoutes(v1, c, jwt)
 	}

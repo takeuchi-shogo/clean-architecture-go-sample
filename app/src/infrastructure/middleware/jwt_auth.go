@@ -29,17 +29,18 @@ func NewJwtAuth(c *config.Config) *JwtAuth {
 }
 
 // Create json web token
-func (j *JwtAuth) CreateToken(userID int) string {
-	claim := jwt.MapClaims{
+func (j *JwtAuth) CreateToken(userID string) string {
+	claims := jwt.MapClaims{
 		"iss": "test",
 		"aud": userID,
+		"iat": time.Now().Unix(),
 		"exp": time.Now().Add(time.Hour * time.Duration(j.TokenExpireAt)).Unix(), // 1day
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claim)
+	// ヘッダーとペーロードの作成
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Add Signature to Token
 	tokenString, _ := token.SignedString([]byte(j.SecretKey))
-
 	return tokenString
 }
 

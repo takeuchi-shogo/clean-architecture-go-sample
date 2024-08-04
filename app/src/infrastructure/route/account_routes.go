@@ -22,8 +22,8 @@ func setAccountRoutes(rg *gin.RouterGroup, db *db.DB, c *config.Config, jwt *mid
 		accounts.POST("/", func(c *gin.Context) {
 			accountsController.Post(c)
 		})
-		// accounts.PATCH("/", func(c *gin.Context) {
-		// 	accountsController.Patch(c)
-		// })
+		accounts.PATCH("/:id", func(c *gin.Context) {
+			accountsController.Patch(c)
+		})
 	}
 }
