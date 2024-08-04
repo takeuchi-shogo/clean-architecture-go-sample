@@ -1,4 +1,8 @@
-mysql/data/*
+
+mysql/*
+!mysql/config
+!mysql/migrations
+!mysql/sql
 
 app/tmp/*
 
